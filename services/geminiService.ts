@@ -29,10 +29,12 @@ const getInitializedAI = (): GoogleGenAI => {
     try {
         // This code assumes `process.env.API_KEY` is available in the browser context.
         // In a build-less setup, this requires manual injection or a specific hosting feature.
-        if (typeof process === 'undefined' || !process.env.API_KEY) {
-            throw new Error("API_KEY environment variable not found. Please configure it in your deployment settings.");
-        }
-        ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        // In services/geminiService.ts
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+if (!apiKey) {
+    throw new Error("VITE_GEMINI_API_KEY environment variable not found. Please configure it in your deployment settings.");
+}
+ai = new GoogleGenAI({ apiKey: apiKey });
         return ai;
     } catch (e) {
         initializationError = e instanceof Error ? e : new Error(String(e));
